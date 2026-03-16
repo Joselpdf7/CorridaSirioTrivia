@@ -163,24 +163,25 @@ const SirioLogo = () => (
 );
 
 // ─── Mascot ───────────────────────────────────────────────────────────────────
-// mood: idle | thinking | happy | wrong | celebrate
+// mood: idle | thinking | happy | wrong | celebrate | running
 const Mascot = ({ mood = "idle", size = 120 }) => {
-  const bounce   = mood === "celebrate" || mood === "happy" ? -5 : 0;
-  const armL     = mood === "celebrate" ? -50 : mood === "happy" ? -35 : mood === "wrong" ? 25 : 18;
-  const armR     = mood === "celebrate" ?  50 : mood === "happy" ?  35 : mood === "wrong" ? -25 : -18;
+  const isRunning = mood === "running";
+  const bounce    = mood === "celebrate" || mood === "happy" ? -5 : isRunning ? -4 : 0;
+  const armL      = mood === "celebrate" ? -50 : mood === "happy" ? -35 : mood === "wrong" ? 25 : isRunning ? -70 : 18;
+  const armR      = mood === "celebrate" ?  50 : mood === "happy" ?  35 : mood === "wrong" ? -25 : isRunning ?  70 : -18;
   const happyEyes = mood === "happy" || mood === "celebrate";
 
-  // Head center: (50, 43), r=24
-  const eyeY  = 49;  // well below sweatband (sweatband ends at y=38)
+  // Head center: (50, 43), r=24  — sweatband ends at y=39
+  const eyeY  = 49;
   const eyeLX = 43, eyeRX = 57;
-  const browOffset = mood === "wrong" ? 2 : mood === "thinking" ? -2 : 0; // positive = closer to eyes = furrowed
-  const browY = 38 + browOffset;
+  // Eyebrows sit between sweatband (y=39) and eyes (y=49) → y=44, subtle
+  const browY = mood === "wrong" ? 45 : mood === "thinking" ? 43 : 44;
   const pupilDX = mood === "thinking" ? -1.5 : 0;
   const pupilDY = mood === "thinking" ? -1.5 : 0;
 
   const mouthPath = mood === "happy" || mood === "celebrate"
-    ? "M 40 61 Q 50 71 60 61"  // big smile
-    : "M 42 62 Q 50 67 58 62"; // gentle smile / neutral
+    ? "M 40 61 Q 50 71 60 61"
+    : "M 42 62 Q 50 67 58 62";
 
   return (
     <svg
@@ -189,27 +190,44 @@ const Mascot = ({ mood = "idle", size = 120 }) => {
       viewBox="0 0 100 125"
       style={{ filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.45))", overflow: "visible" }}
     >
-      {/* Ground shadow — fixed, not bouncing */}
+      {/* Ground shadow — fixed */}
       <ellipse cx="50" cy="123" rx="21" ry="4" fill="rgba(0,0,0,0.2)" />
 
-      {/* Everything that bounces */}
       <g transform={`translate(0, ${bounce})`}>
 
-        {/* ── Shoes ── */}
-        {/* Left sole */}
-        <ellipse cx="41" cy="119" rx="11" ry="5" fill="#E0E0E0" />
-        {/* Left upper */}
-        <rect x="31" y="112" width="20" height="9" rx="4" fill="#576CBC" />
-        <rect x="31" y="112" width="20" height="3.5" rx="1.5" fill="#87CEEB" />
-        {/* Right sole */}
-        <ellipse cx="59" cy="119" rx="11" ry="5" fill="#E0E0E0" />
-        {/* Right upper */}
-        <rect x="49" y="112" width="20" height="9" rx="4" fill="#576CBC" />
-        <rect x="49" y="112" width="20" height="3.5" rx="1.5" fill="#87CEEB" />
-
-        {/* ── Legs ── */}
-        <rect x="37" y="100" width="10" height="15" rx="5" fill="#0B2447" />
-        <rect x="53" y="100" width="10" height="15" rx="5" fill="#0B2447" />
+        {/* ── Shoes & Legs (running = angled, normal = straight) ── */}
+        {isRunning ? (
+          <>
+            {/* Left leg forward */}
+            <g transform="rotate(-28, 42, 100)">
+              <rect x="37" y="100" width="10" height="15" rx="5" fill="#0B2447" />
+              <ellipse cx="42" cy="117" rx="10" ry="4.5" fill="#E0E0E0" />
+              <rect x="32" y="111" width="19" height="8" rx="3.5" fill="#576CBC" />
+              <rect x="32" y="111" width="19" height="3" rx="1.5" fill="#87CEEB" />
+            </g>
+            {/* Right leg back */}
+            <g transform="rotate(22, 58, 100)">
+              <rect x="53" y="100" width="10" height="15" rx="5" fill="#0B2447" />
+              <ellipse cx="58" cy="117" rx="10" ry="4.5" fill="#E0E0E0" />
+              <rect x="49" y="111" width="19" height="8" rx="3.5" fill="#576CBC" />
+              <rect x="49" y="111" width="19" height="3" rx="1.5" fill="#87CEEB" />
+            </g>
+          </>
+        ) : (
+          <>
+            {/* Left shoe */}
+            <ellipse cx="41" cy="119" rx="11" ry="5" fill="#E0E0E0" />
+            <rect x="31" y="112" width="20" height="9" rx="4" fill="#576CBC" />
+            <rect x="31" y="112" width="20" height="3.5" rx="1.5" fill="#87CEEB" />
+            {/* Right shoe */}
+            <ellipse cx="59" cy="119" rx="11" ry="5" fill="#E0E0E0" />
+            <rect x="49" y="112" width="20" height="9" rx="4" fill="#576CBC" />
+            <rect x="49" y="112" width="20" height="3.5" rx="1.5" fill="#87CEEB" />
+            {/* Legs */}
+            <rect x="37" y="100" width="10" height="15" rx="5" fill="#0B2447" />
+            <rect x="53" y="100" width="10" height="15" rx="5" fill="#0B2447" />
+          </>
+        )}
 
         {/* ── Shorts ── */}
         <rect x="27" y="87" width="46" height="17" rx="10" fill="#19376D" />
@@ -252,14 +270,14 @@ const Mascot = ({ mood = "idle", size = 120 }) => {
         <ellipse cx="32" cy="52" rx="6" ry="4" fill="rgba(255,120,100,0.45)" />
         <ellipse cx="68" cy="52" rx="6" ry="4" fill="rgba(255,120,100,0.45)" />
 
-        {/* ── Eyebrows ── */}
+        {/* ── Eyebrows — thin, subtle, well below sweatband ── */}
         <path
-          d={`M ${eyeLX - 5} ${browY} Q ${eyeLX} ${browY - 4} ${eyeLX + 5} ${browY}`}
-          stroke="#3D1C00" strokeWidth="2.2" fill="none" strokeLinecap="round"
+          d={`M ${eyeLX - 4} ${browY} Q ${eyeLX} ${browY - 2} ${eyeLX + 4} ${browY}`}
+          stroke="#6B3A1A" strokeWidth="1.4" fill="none" strokeLinecap="round"
         />
         <path
-          d={`M ${eyeRX - 5} ${browY} Q ${eyeRX} ${browY - 4} ${eyeRX + 5} ${browY}`}
-          stroke="#3D1C00" strokeWidth="2.2" fill="none" strokeLinecap="round"
+          d={`M ${eyeRX - 4} ${browY} Q ${eyeRX} ${browY - 2} ${eyeRX + 4} ${browY}`}
+          stroke="#6B3A1A" strokeWidth="1.4" fill="none" strokeLinecap="round"
         />
 
         {/* ── Eyes ── */}
@@ -345,39 +363,32 @@ const Confetti = () => {
   );
 };
 
-// ─── Speech Bubble ────────────────────────────────────────────────────────────
+// ─── Speech Bubble — in-flow, never escapes its container ────────────────────
 const SpeechBubble = ({ text, visible, color = "#19376D" }) => (
   <div style={{
-    position: "absolute",
-    bottom: "calc(100% + 10px)",
-    left: "50%",
-    transform: visible ? "translateX(-50%) scale(1)" : "translateX(-50%) scale(0.4)",
-    transformOrigin: "bottom center",
     opacity: visible ? 1 : 0,
-    transition: "all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-    background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: "13px",
-    padding: "9px 14px",
-    borderRadius: "16px",
-    whiteSpace: "nowrap",
-    maxWidth: "220px",
-    whiteSpace: "normal",
-    textAlign: "center",
-    lineHeight: 1.4,
-    boxShadow: `0 4px 16px ${color}55`,
+    transform: visible ? "scale(1)" : "scale(0.5)",
+    transformOrigin: "bottom center",
+    transition: "all 0.3s cubic-bezier(0.34,1.56,0.64,1)",
     pointerEvents: "none",
-    zIndex: 20,
+    display: "flex", flexDirection: "column", alignItems: "center",
   }}>
-    {text}
     <div style={{
-      position: "absolute", bottom: "-8px", left: "50%",
-      transform: "translateX(-50%)",
+      background: color,
+      color: "#fff", fontWeight: "700", fontSize: "12px",
+      padding: "8px 12px", borderRadius: "12px",
+      textAlign: "center", lineHeight: 1.4,
+      maxWidth: "115px",
+      boxShadow: `0 4px 12px ${color}66`,
+    }}>
+      {text}
+    </div>
+    {/* Arrow pointing down toward mascot */}
+    <div style={{
       width: 0, height: 0,
-      borderLeft: "8px solid transparent",
-      borderRight: "8px solid transparent",
-      borderTop: `8px solid ${color}dd`,
+      borderLeft: "7px solid transparent",
+      borderRight: "7px solid transparent",
+      borderTop: `7px solid ${color}`,
     }} />
   </div>
 );
@@ -426,7 +437,7 @@ export default function CorridaSirioTrivia() {
     if (duration > 0) bubbleTimerRef.current = setTimeout(() => setBubbleVisible(false), duration);
   }, []);
 
-  // Idle bob
+  // Idle bob during playing
   useEffect(() => {
     if (gameState !== "playing") return;
     const t = setInterval(() => {
@@ -434,6 +445,15 @@ export default function CorridaSirioTrivia() {
     }, 2200);
     return () => clearInterval(t);
   }, [gameState, mascotMood]);
+
+  // Start screen: alternate idle ↔ running every few seconds
+  useEffect(() => {
+    if (gameState !== "start") return;
+    const t = setInterval(() => {
+      setMascotMood((m) => (m === "idle" ? "running" : "idle"));
+    }, 2800);
+    return () => { clearInterval(t); };
+  }, [gameState]);
 
   // Timer
   useEffect(() => {
@@ -509,6 +529,7 @@ export default function CorridaSirioTrivia() {
     }
     setQIn(false);
     setOptionsIn(false);
+    setMascotMood("running");  // mascote corre durante a transição
     setTimeout(() => {
       setCurrentQ(next);
       setSelectedIdx(null);
@@ -574,6 +595,7 @@ export default function CorridaSirioTrivia() {
         @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
         @keyframes timerBlink{0%,100%{opacity:1}50%{opacity:0.45}}
         @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+        @keyframes mascotRun{0%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}100%{transform:translateY(0) rotate(-4deg)}}
       `}</style>
 
       {showConfetti && <Confetti />}
@@ -588,17 +610,18 @@ export default function CorridaSirioTrivia() {
               <SirioLogo />
             </div>
 
-            {/* Mascot */}
-            <div style={{ display: "flex", justifyContent: "center", position: "relative", marginBottom: "16px" }}>
-              <div style={{ position: "relative", animation: "mascotBob 2.8s ease-in-out infinite" }}>
-                <div style={{ position: "relative" }}>
-                  <SpeechBubble text={mascotMsg} visible={bubbleVisible} color="#19376D" />
-                  <Mascot mood="happy" size={130} />
-                </div>
+            {/* Mascot + bubble — fixed slot so bubble never overlaps logo */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "16px" }}>
+              {/* Bubble slot — fixed height, bubble lives here */}
+              <div style={{ height: "64px", display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: "4px" }}>
+                <SpeechBubble text={mascotMsg} visible={bubbleVisible} color="#19376D" />
+              </div>
+              <div style={{ animation: mascotMood === "running" ? "mascotRun 0.38s ease-in-out infinite" : "mascotBob 2.8s ease-in-out infinite" }}>
+                <Mascot mood={mascotMood} size={130} />
               </div>
             </div>
 
-            <h1 style={{ color: "#fff", fontSize: "26px", fontWeight: "900", lineHeight: 1.2, marginBottom: "8px" }}>
+            <h1 style={{ color: "#fff", fontSize: "26px", fontWeight: "900", lineHeight: 1.4, marginBottom: "12px", padding: "0 8px" }}>
               Você é{" "}
               <span style={{ color: "#E67E22" }}>Corredor Nutella</span>
               {" "}ou{" "}
@@ -692,18 +715,20 @@ export default function CorridaSirioTrivia() {
             <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "14px" }}>
 
               {/* Mascot column */}
-              <div style={{
-                flexShrink: 0, width: "110px", textAlign: "center",
-                position: "relative",
-                animation:
-                  mascotMood === "celebrate" ? "mascotCelebrate 0.7s ease" :
-                  mascotMood === "happy"     ? "mascotHappy 0.6s ease" :
-                  mascotMood === "wrong"     ? "mascotWrong 0.5s ease" :
-                  mascotBounce               ? "mascotBob 1.4s ease-in-out" :
-                  "none",
-              }}>
-                <div style={{ position: "relative" }}>
+              <div style={{ flexShrink: 0, width: "120px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                {/* Bubble slot — fixed height keeps header safe */}
+                <div style={{ height: "60px", display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: "4px", width: "100%" }}>
                   <SpeechBubble text={mascotMsg} visible={bubbleVisible} color="#19376D" />
+                </div>
+                <div style={{
+                  animation:
+                    mascotMood === "running"   ? "mascotRun 0.38s ease-in-out infinite" :
+                    mascotMood === "celebrate" ? "mascotCelebrate 0.7s ease" :
+                    mascotMood === "happy"     ? "mascotHappy 0.6s ease" :
+                    mascotMood === "wrong"     ? "mascotWrong 0.5s ease" :
+                    mascotBounce               ? "mascotBob 1.4s ease-in-out" :
+                    "none",
+                }}>
                   <Mascot mood={mascotMood} size={110} />
                 </div>
                 {/* Timer number */}
