@@ -610,22 +610,24 @@ export default function CorridaSirioTrivia() {
               <SirioLogo />
             </div>
 
-            {/* Mascot + bubble — fixed slot so bubble never overlaps logo */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "16px" }}>
-              {/* Bubble slot — fixed height, bubble lives here */}
-              <div style={{ height: "64px", display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: "4px" }}>
-                <SpeechBubble text={mascotMsg} visible={bubbleVisible} color="#19376D" />
-              </div>
+            {/* Mascot */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "10px" }}>
               <div style={{ animation: mascotMood === "running" ? "mascotRun 0.38s ease-in-out infinite" : "mascotBob 2.8s ease-in-out infinite" }}>
                 <Mascot mood={mascotMood} size={130} />
               </div>
             </div>
+            {/* Frase do mascote — inline, sem sobreposição */}
+            <div style={{
+              background: "rgba(25,55,109,0.7)", border: "1px solid rgba(87,108,188,0.3)",
+              borderRadius: "12px", padding: "10px 16px",
+              color: "#fff", fontSize: "14px", fontWeight: "600",
+              marginBottom: "16px", lineHeight: 1.4,
+            }}>
+              💬 {mascotMood === "running" ? "Segura que eu tô aquecendo! 🏃" : "Bora descobrir a verdade? 👀"}
+            </div>
 
-            <h1 style={{ color: "#fff", fontSize: "26px", fontWeight: "900", lineHeight: 1.4, marginBottom: "12px", padding: "0 8px" }}>
-              Você é{" "}
-              <span style={{ color: "#E67E22" }}>Corredor Nutella</span>
-              {" "}ou{" "}
-              <span style={{ color: "#2ECC71" }}>Corredor Raiz</span>?
+            <h1 style={{ color: "#fff", fontSize: "22px", fontWeight: "900", lineHeight: 1.5, marginBottom: "16px" }}>
+              Você é{"  "}🍫{"  "}<span style={{ color: "#E67E22" }}>Corredor Nutella</span>{"  "}ou{"  "}🌿{"  "}<span style={{ color: "#2ECC71" }}>Corredor Raiz</span>?
             </h1>
             <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "14px", marginBottom: "28px", lineHeight: 1.6 }}>
               10 perguntas. Sem julgamento.<br />Tá, talvez um pouco. 😏
@@ -714,12 +716,8 @@ export default function CorridaSirioTrivia() {
             {/* Mascot + Question side by side */}
             <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "14px" }}>
 
-              {/* Mascot column */}
-              <div style={{ flexShrink: 0, width: "120px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                {/* Bubble slot — fixed height keeps header safe */}
-                <div style={{ height: "60px", display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: "4px", width: "100%" }}>
-                  <SpeechBubble text={mascotMsg} visible={bubbleVisible} color="#19376D" />
-                </div>
+              {/* Mascot column — sem bolha aqui */}
+              <div style={{ flexShrink: 0, width: "110px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{
                   animation:
                     mascotMood === "running"   ? "mascotRun 0.38s ease-in-out infinite" :
@@ -731,7 +729,6 @@ export default function CorridaSirioTrivia() {
                 }}>
                   <Mascot mood={mascotMood} size={110} />
                 </div>
-                {/* Timer number */}
                 <div style={{
                   color: timerColor, fontWeight: "900", fontSize: "22px",
                   transition: "color 0.3s",
@@ -754,6 +751,34 @@ export default function CorridaSirioTrivia() {
                 <p style={{ color: "#fff", fontSize: "16px", fontWeight: "700", lineHeight: 1.5 }}>
                   {q.question}
                 </p>
+              </div>
+            </div>
+
+            {/* Comentário do mascote — aparece após resposta, nunca sobrepõe nada */}
+            <div style={{
+              overflow: "hidden",
+              maxHeight: bubbleVisible ? "80px" : "0px",
+              opacity: bubbleVisible ? 1 : 0,
+              transition: "max-height 0.35s ease, opacity 0.3s ease",
+              marginBottom: bubbleVisible ? "10px" : "0px",
+            }}>
+              <div style={{
+                background: "#19376D",
+                border: "1px solid rgba(87,108,188,0.4)",
+                borderRadius: "12px",
+                padding: "10px 14px",
+                color: "#fff",
+                fontSize: "13px",
+                fontWeight: "600",
+                lineHeight: 1.4,
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}>
+                <span style={{ fontSize: "20px", flexShrink: 0 }}>
+                  {mascotMood === "happy" || mascotMood === "celebrate" ? "😄" : mascotMood === "wrong" ? "😅" : "💬"}
+                </span>
+                {mascotMsg}
               </div>
             </div>
 
